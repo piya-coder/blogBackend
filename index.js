@@ -3,14 +3,17 @@ const { log } = require("console");
 const { connectDb } = require("./Database/dbConfig");
 const blogModel = require("./model/Blog.model");
 const express = require("express");
+const cors = require("cors")
 const application = express();
 
 connectDb();
-///================================middleware=======================///
+
+///===============================   middleware   ========================///
+application.use(cors())
 application.use(express.json());
 application.use(express.urlencoded({ extended : true }))
-/// ========================  make routes ========================///
-application.post("/create", async (req, res) => {
+/// ========================  make routes =========================///
+application.post("/createBlog", async (req, res) => {
   try {
     const { title, description, authorName } = req.body;
 
@@ -38,7 +41,7 @@ application.post("/create", async (req, res) => {
         message: " title is required",
       });
     }
-    ///=====================checking data is it already exits in database=======================
+    ///=====================checking data is it already exits in database =======================
     const existTitle = await blogModel.find({ title: title });
     if (existTitle?.length > 0) {
       return res.status(200).json({
@@ -63,7 +66,7 @@ application.post("/create", async (req, res) => {
       });
     }
   } catch (error) {
-    console.error(error);
+    console.log("data saving error" , error);
   }
 });
 /// ============================= get all blog =====================================
@@ -79,7 +82,7 @@ application.get ("/getAllblog" , async (req, res ) => {
   }
 
  } catch (error) {
-  console.log(error);
+  console.log("error data" , error);
   
  }
 })
